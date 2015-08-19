@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Appenders>
+		<!-- O Nome do arquivo de configuração de saída de log Mais a ler e a escrever.> -->
+		<File name="File" fileName="log4j.log" append="false">
+			<!-- Formatos de saída:> -->
+			<PatternLayout pattern="%-2d{dd/MM/yy HH:mm} [%t] %5p %F:%L \u2013 %m%n" />
+		</File>
+
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d %-5p [%t] %C{2} (%F:%L) - %m%n" />
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Logger name="br.com.foo.Bar" level="trace" additivity="false">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Logger>
+		<Root level="error">
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
+</Configuration>

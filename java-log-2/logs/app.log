@@ -1,0 +1,12 @@
+2014-12-03 at 19:30:59 BRT TRACE MyApp 20 main - Entering application.
+2014-12-03 at 19:30:59 BRT TRACE br.com.foo.Bar 10 doIt - entry
+2014-12-03 at 19:30:59 BRT ERROR br.com.foo.Bar 11 doIt - Did it again!
+2014-12-03 at 19:30:59 BRT TRACE br.com.foo.Bar 12 doIt - exit with(false)
+2014-12-03 at 19:30:59 BRT ERROR MyApp 23 main - Didn't do it.
+2014-12-03 at 19:30:59 BRT TRACE MyApp 25 main - Exiting application.
+2014-12-03 at 19:31:21 BRT TRACE MyApp 20 main - Entering application.
+2014-12-03 at 19:31:21 BRT TRACE br.com.foo.Bar 10 doIt - entry
+2014-12-03 at 19:31:21 BRT ERROR br.com.foo.Bar 11 doIt - Did it again!
+2014-12-03 at 19:31:21 BRT TRACE br.com.foo.Bar 12 doIt - exit with(false)
+2014-12-03 at 19:31:21 BRT ERROR MyApp 23 main - Didn't do it.
+2014-12-03 at 19:31:21 BRT TRACE MyApp 25 main - Exiting application.

@@ -1,0 +1,70 @@
+package com.spring.estoque.dao.impl;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.spring.estoque.dao.ProdutoDAO;
+import com.spring.estoque.model.Produto;
+
+@Repository
+// Torna esta implementacao padrao, se nao for especificado @Qualifier, este eh
+// injetado
+@Primary
+@Transactional
+public class ProdutoHibernateDAO implements ProdutoDAO {
+
+	@PersistenceContext
+	EntityManager manager;
+
+	@Override
+	public void salvar(Produto produto) {
+		// TODO Auto-generated method stub
+		// Uma vez que o Spring já abriu a sessão basta pedir para a
+		// SessionFactory pegar a session já aberta através do método
+		// getCurrentSession()
+		manager.persist(produto);
+	}
+
+	@Override
+	public void alterar(Produto produto) {
+		// TODO Auto-generated method stub
+		manager.merge(produto);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Produto> listar() {
+		// TODO Auto-generated method stub
+		List<Produto> produtos = manager.createQuery("from Produto").getResultList();
+		return produtos;
+	}
+
+	@Override
+	public Produto buscarPorld(Long id) {
+		// TODO Auto-generated method stub
+		return (Produto) sessionFactory.getCurrentSession().get(Produto.class, id);
+	}
+
+	@Override
+	public void remover(Produto produto) {
+		// TODO Auto-generated method stub
+		sessionFactory.getCurrentSession().delete(produto);
+	}
+
+	@Override
+	public Long estoqueAtual(Produto produto) {
+		// TODO Auto-generated method stub
+		Query query = sessionFactory.getCurrentSession().createQuery("select quantidade from Produto where id = :pid");
+		query.setParameter("pid", produto.getId());
+		return (Long) query.uniqueResult();
+	}
+
+}

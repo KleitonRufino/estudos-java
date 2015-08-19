@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- <beans> é o elemento root do nosso arquivo XML -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc 
+    http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+    http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context-4.1.xsd
+    http://www.springframework.org/schema/security
+  	http://www.springframework.org/schema/security/spring-security-3.2.xsd
+  	http://www.springframework.org/schema/aop   
+	http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+	<!-- <bean> que representam a configuração dos objetos do nosso sistema 
+		na forma de bean para o Spring. -->
+	<!-- • id - representa o identificador do nosso bean, o Spring não aceita 
+		id's repetidos; • class - representa o FQN(nome completo de uma classe.) 
+		da nossa classe. -->
+
+
+	<!-- Informando ao Spring onde vai ficar os arquivos jsp -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/views/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+
+	<!-- Habilitando anotacoes -->
+	<mvc:annotation-driven />
+	<!-- Pacote base onde deve ser rastreado os componentes anotados -->
+	<context:component-scan base-package="com.spring.estoque" />
+
+	<!-- Integrando Spring ao Hibernate -->
+	<!-- Definindo configurações do BD -->
+	<bean id="mysqlDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost/caelum-fj27" />
+		<property name="username" value="root" />
+		<property name="password" value="" />
+	</bean>
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.spring.estoque.model.Produto</value>
+				<value>com.spring.estoque.model.Movimentacao</value>
+				<value>com.spring.estoque.model.Usuario</value>
+				<value>com.spring.estoque.model.Grupo</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="mysqlDataSource" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+	</bean>
+	<!-- suporte a transacoes -->
+	<tx:annotation-driven />
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<!--<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager"> 
+		<property name="sessionFactory" ref="sessionFactory" /> </bean> <bean id="persistenceExceptionTranslationPostProcessor" 
+		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" 
+		/> -->
+
+	<!-- Configurar Spring para ler arquivo de mensagens -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="/WEB-INF/i18n/messages" />
+	</bean>
+
+	<!-- Configurando Spring Security -->
+
+	<security:authentication-manager>
+		<!-- informando que o provider de autenticação eh o UsuarioHibernateDAO. 
+			Com essa configuração o Spring Security vai fazer a chamada ao metodo loadUserByUsername() 
+			para validar o login de um usuario. -->
+		<security:authentication-provider
+			user-service-ref="usuarioHibernateDAO" />
+	</security:authentication-manager>
+
+	<!-- Definindo as permissoes de acesso -->
+	<security:http auto-config="true">
+		<security:intercept-url pattern="/produtos/**"
+			access="ROLE_USER" />
+		<security:form-login login-page="/login.html"
+			always-use-default-target="true" default-target-url="/produtos/listar.html"
+			login-processing-url="/login" />
+		<security:logout logout-url="/logout"
+			logout-success-url="/login.html" />
+	</security:http>
+
+
+	<!-- Configuracoes AOP -->
+	<!-- habilita o suporte a AOP -->
+	<aop:aspectj-autoproxy />
+
+	<!-- Spring Mail -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com" />
+		<property name="username" value="kleiton.arufino" />
+		<property name="password" value="hashtagasterisco##1945**" />
+		<property name="protocol" value="smtps" />
+
+		<property name="port" value="465" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtps.auth">true</prop>
+				<prop key="mail.smtps.starttls.enable">true</prop>
+				<prop key="mail.smtps.debug">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="mailMessage" class="org.springframework.mail.SimpleMailMessage">
+		<property name="subject" value="email gerado" />
+		<property name="from" value="kleiton.arufinol@gmail.com" />
+	</bean>
+
+</beans>

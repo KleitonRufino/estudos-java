@@ -1,0 +1,24 @@
+package com.spring.estoque.dao.impl;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.spring.estoque.dao.MovimentacaoDAO;
+import com.spring.estoque.model.Movimentacao;
+
+@Repository
+public class MovimentacaoDAOImpl implements MovimentacaoDAO {
+
+	@PersistenceContext
+	EntityManager manager;
+
+	@Override
+	public void salvar(Movimentacao movimentacao) {
+		// TODO Auto-generated method stub
+		manager.merge(movimentacao);
+	}
+
+}
