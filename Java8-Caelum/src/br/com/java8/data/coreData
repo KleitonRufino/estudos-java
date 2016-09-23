@@ -1,0 +1,166 @@
+
+import java.sql.Date;
+import java.time.DateTimeException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+
+public class CoreData {
+
+	private long anos;
+	private long mes;
+	private long dias;
+	public static final String DD_MM_YY = "dd/MM/yyyy";
+
+	public enum FormatosData {
+		DD_MM_YYY("dd/MM/yyy");
+		public String formato;
+
+		private FormatosData(String formato) {
+			this.formato = formato;
+		}
+	}
+
+	private CoreData(int anos, int mes, int dias) {
+		this.anos = anos;
+		this.mes = mes;
+		this.dias = dias;
+
+	}
+
+	public static CoreData diferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
+		Period periodo = Period.between(dataMaisAntiga.toLocalDate(), dataMaisRecente.toLocalDate());
+		return new CoreData(periodo.getYears(), periodo.getMonths(), periodo.getDays());
+	}
+
+	public static long obterAnosNaDiferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
+		return ChronoUnit.YEARS.between(dataMaisAntiga.toLocalDate(), dataMaisRecente.toLocalDate());
+	}
+
+	public static long obterMesesNaDiferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
+		return ChronoUnit.YEARS.between(dataMaisAntiga.toLocalDate(), dataMaisRecente.toLocalDate());
+	}
+
+	public static long obterDiasNaDiferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
+		LocalDate dataMaisAntigaAux = dataMaisAntiga.toLocalDate();
+		LocalDate dataMaisRecenteAux = dataMaisRecente.toLocalDate();
+		return ChronoUnit.DAYS.between(dataMaisAntigaAux, dataMaisRecenteAux);
+	}
+
+	public static Boolean validarDataInicioETermino(Date dataMaisAntiga, Date dataMaisRecente) {
+		return dataMaisAntiga.toLocalDate().isBefore(dataMaisRecente.toLocalDate()) == true ? true : false;
+	}
+
+	public static String obterDataFormatada(Date data, CoreData.FormatosData formato) throws DateTimeException {
+		return data.toLocalDate().format(DateTimeFormatter.ofPattern(formato.toString()));
+	}
+
+	public static Date obterDataFormatada(String data, CoreData.FormatosData formato) throws DateTimeException {
+		return Date.valueOf(LocalDate.parse(data, DateTimeFormatter.ofPattern(formato.toString())));
+	}
+
+	public static Date obterDataFormatadaRetornaDateSQL(Date data, CoreData.FormatosData formato)
+			throws DateTimeException {
+		return Date.valueOf(LocalDate.parse(data.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE),
+				DateTimeFormatter.ofPattern(formato.toString())));
+	}
+
+	public static Date obterData(String data) throws DateTimeException {
+		return Date.valueOf(LocalDate.parse(data));
+	}
+
+	public static Date criarData(int ano, int mes, int dia) throws DateTimeException {
+		return Date.valueOf(LocalDate.of(ano, mes, dia));
+	}
+
+	public static Date modificarDataPeloAno(Date data, int ano) throws DateTimeException {
+		return Date.valueOf(data.toLocalDate().withYear(ano));
+	}
+
+	public static Date modificarDataPeloMes(Date data, int mes) throws DateTimeException {
+		return Date.valueOf(data.toLocalDate().withMonth(mes));
+	}
+
+	public static Date modificarDataPeloDia(Date data, int dia) throws DateTimeException {
+		return Date.valueOf(data.toLocalDate().withDayOfMonth(dia));
+	}
+
+	public static Boolean validarData(Date data) {
+		try {
+			LocalDate.of(data.toLocalDate().getYear(), data.toLocalDate().getMonth(),
+					data.toLocalDate().getDayOfMonth());
+		} catch (DateTimeException e) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static Boolean validarData(int ano, int mes, int dia) {
+		try {
+			LocalDate.of(ano, Month.of(mes), dia);
+		} catch (DateTimeException e) {
+			return false;
+		}
+		return true;
+	}
+
+	public static Date obterDataAtual() {
+		return Date.valueOf(LocalDate.now());
+	}
+
+	public static Date converterParaDateSql(LocalDate data) {
+		return Date.valueOf(data);
+	}
+
+	public static Date converterParaDateSql(java.util.Date data) {
+		return new Date(data.getTime());
+	}
+
+	public static java.util.Date converterParaDateUtil(LocalDate data) {
+		return Date.from(data.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+
+	}
+
+	public static java.util.Date converterParaDateUtil(Date data) {
+		return new java.util.Date(data.getTime());
+	}
+
+	public static LocalDate converterParaLocalDate(Date data) {
+		return data.toLocalDate();
+	}
+
+	public static LocalDate converterParaLocalDate(java.util.Date data) {
+		return Instant.ofEpochMilli(data.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+
+	}
+
+	public long getAnos() {
+		return anos;
+	}
+
+	public void setAnos(long anos) {
+		this.anos = anos;
+	}
+
+	public long getMes() {
+		return mes;
+	}
+
+	public void setMes(long mes) {
+		this.mes = mes;
+	}
+
+	public long getDias() {
+		return dias;
+	}
+
+	public void setDias(long dias) {
+		this.dias = dias;
+	}
+
+}
