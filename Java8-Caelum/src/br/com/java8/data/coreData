@@ -15,9 +15,31 @@ import java.time.temporal.ChronoUnit;
 
 public class CoreData {
 
-	private long anos;
-	private long mes;
-	private long dias;
+	static class InformacoesData {
+
+		private long anos;
+		private long mes;
+		private long dias;
+
+		public InformacoesData(int anos, int mes, int dias) {
+			this.anos = anos;
+			this.mes = mes;
+			this.dias = dias;
+
+		}
+
+		public long getAnos() {
+			return anos;
+		}
+
+		public long getMes() {
+			return mes;
+		}
+
+		public long getDias() {
+			return dias;
+		}
+	}
 
 	enum FormatosData {
 		DD_MM_YYYY("dd/MM/yyyy");
@@ -33,16 +55,9 @@ public class CoreData {
 		}
 	}
 
-	private CoreData(int anos, int mes, int dias) {
-		this.anos = anos;
-		this.mes = mes;
-		this.dias = dias;
-
-	}
-
-	public static CoreData diferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
+	public static InformacoesData diferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
 		Period periodo = Period.between(dataMaisAntiga.toLocalDate(), dataMaisRecente.toLocalDate());
-		return new CoreData(periodo.getYears(), periodo.getMonths(), periodo.getDays());
+		return new InformacoesData(periodo.getYears(), periodo.getMonths(), periodo.getDays());
 	}
 
 	public static long obterAnosTotaisNaDiferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
@@ -159,28 +174,40 @@ public class CoreData {
 
 	}
 
-	public long getAnos() {
-		return anos;
+	public static StringBuilder apresentarMensagem(InformacoesData informacoesData, Boolean mostrarIdadeCompleta) {
+		StringBuilder stringDeApresentacao = new StringBuilder();
+		if (mostrarIdadeCompleta) {
+			if (informacoesData.getAnos() > 1) {
+				stringDeApresentacao.append(informacoesData.getAnos()).append(" ").append("anos").append(" ");
+			} else if (informacoesData.getAnos() == 1) {
+				stringDeApresentacao.append(informacoesData.getAnos()).append(" ").append("ano").append(" ");
+			}
+			if (informacoesData.getMes() > 1) {
+				stringDeApresentacao.append(informacoesData.getMes()).append(" ").append("meses").append(" ");
+			} else if (informacoesData.getMes() == 1) {
+				stringDeApresentacao.append(informacoesData.getMes()).append(" ").append("mês").append(" ");
+			}
+			if (informacoesData.getDias() > 1) {
+				stringDeApresentacao.append(informacoesData.getDias()).append(" ").append("dias").append(" ");
+			} else if (informacoesData.getDias() == 1) {
+				stringDeApresentacao.append(informacoesData.getDias()).append(" ").append("dia").append(" ");
+			}
+		} else {
+			if (informacoesData.getAnos() > 1) {
+				stringDeApresentacao.append(informacoesData.getAnos()).append(" ").append("anos");
+			} else if (informacoesData.getAnos() == 1) {
+				stringDeApresentacao.append(informacoesData.getAnos()).append(" ").append("ano");
+			} else if (informacoesData.getMes() > 1) {
+				stringDeApresentacao.append(informacoesData.getMes()).append(" ").append("meses");
+			} else if (informacoesData.getMes() > 1) {
+				stringDeApresentacao.append(informacoesData.getMes()).append(" ").append("meses");
+			} else if (informacoesData.getMes() == 1) {
+				stringDeApresentacao.append(informacoesData.getMes()).append(" ").append("mês");
+			} else if (informacoesData.getDias() > 1) {
+				stringDeApresentacao.append(informacoesData.getDias()).append(" ").append("dias");
+			} else if (informacoesData.getDias() == 1) {
+				stringDeApresentacao.append(informacoesData.getDias()).append(" ").append("dia");
+			}
+		}
+		return stringDeApresentacao;
 	}
-
-	public void setAnos(long anos) {
-		this.anos = anos;
-	}
-
-	public long getMes() {
-		return mes;
-	}
-
-	public void setMes(long mes) {
-		this.mes = mes;
-	}
-
-	public long getDias() {
-		return dias;
-	}
-
-	public void setDias(long dias) {
-		this.dias = dias;
-	}
-
-}
