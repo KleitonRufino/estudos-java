@@ -1,3 +1,4 @@
+package br.com.java8.data;
 
 import java.sql.Date;
 import java.time.DateTimeException;
@@ -14,14 +15,17 @@ public class CoreData {
 	private long anos;
 	private long mes;
 	private long dias;
-	public static final String DD_MM_YY = "dd/MM/yyyy";
 
-	public enum FormatosData {
-		DD_MM_YYY("dd/MM/yyy");
-		public String formato;
+	enum FormatosData {
+		DD_MM_YYYY("dd/MM/yyyy");
+		private String formato;
 
 		private FormatosData(String formato) {
 			this.formato = formato;
+		}
+		@Override
+		public String toString() {
+			return this.formato;
 		}
 	}
 
@@ -57,20 +61,6 @@ public class CoreData {
 
 	public static String obterDataFormatada(Date data, CoreData.FormatosData formato) throws DateTimeException {
 		return data.toLocalDate().format(DateTimeFormatter.ofPattern(formato.toString()));
-	}
-
-	public static Date obterDataFormatada(String data, CoreData.FormatosData formato) throws DateTimeException {
-		return Date.valueOf(LocalDate.parse(data, DateTimeFormatter.ofPattern(formato.toString())));
-	}
-
-	public static Date obterDataFormatadaRetornaDateSQL(Date data, CoreData.FormatosData formato)
-			throws DateTimeException {
-		return Date.valueOf(LocalDate.parse(data.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE),
-				DateTimeFormatter.ofPattern(formato.toString())));
-	}
-
-	public static Date obterData(String data) throws DateTimeException {
-		return Date.valueOf(LocalDate.parse(data));
 	}
 
 	public static Date criarData(int ano, int mes, int dia) throws DateTimeException {
