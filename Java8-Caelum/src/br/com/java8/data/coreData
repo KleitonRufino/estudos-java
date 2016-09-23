@@ -1,12 +1,15 @@
 package br.com.java8.data;
 
 import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Period;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
@@ -23,6 +26,7 @@ public class CoreData {
 		private FormatosData(String formato) {
 			this.formato = formato;
 		}
+
 		@Override
 		public String toString() {
 			return this.formato;
@@ -41,18 +45,16 @@ public class CoreData {
 		return new CoreData(periodo.getYears(), periodo.getMonths(), periodo.getDays());
 	}
 
-	public static long obterAnosNaDiferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
+	public static long obterAnosTotaisNaDiferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
 		return ChronoUnit.YEARS.between(dataMaisAntiga.toLocalDate(), dataMaisRecente.toLocalDate());
 	}
 
-	public static long obterMesesNaDiferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
+	public static long obterMesesTotaisNaDiferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
 		return ChronoUnit.YEARS.between(dataMaisAntiga.toLocalDate(), dataMaisRecente.toLocalDate());
 	}
 
-	public static long obterDiasNaDiferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
-		LocalDate dataMaisAntigaAux = dataMaisAntiga.toLocalDate();
-		LocalDate dataMaisRecenteAux = dataMaisRecente.toLocalDate();
-		return ChronoUnit.DAYS.between(dataMaisAntigaAux, dataMaisRecenteAux);
+	public static long obterDiasTotaisNaDiferencaEntreDatas(Date dataMaisAntiga, Date dataMaisRecente) {
+		return ChronoUnit.DAYS.between(dataMaisAntiga.toLocalDate(), dataMaisRecente.toLocalDate());
 	}
 
 	public static Boolean validarDataInicioETermino(Date dataMaisAntiga, Date dataMaisRecente) {
@@ -77,6 +79,34 @@ public class CoreData {
 
 	public static Date modificarDataPeloDia(Date data, int dia) throws DateTimeException {
 		return Date.valueOf(data.toLocalDate().withDayOfMonth(dia));
+	}
+
+	public static Date acrescentarAnosAData(Date data, int ano) throws DateTimeException {
+		return Date.valueOf(data.toLocalDate().plusYears(ano));
+	}
+
+	public static Date acrescentarMesesAData(Date data, int mes) throws DateTimeException {
+		return Date.valueOf(data.toLocalDate().plusMonths(mes));
+	}
+
+	public static Date acrescentarDiasAData(Date data, int dias) throws DateTimeException {
+		return Date.valueOf(data.toLocalDate().plusDays(dias));
+	}
+
+	public static Date subtrairAnosAData(Date data, int ano) throws DateTimeException {
+		return Date.valueOf(data.toLocalDate().minusYears(ano));
+	}
+
+	public static Date subtrairMesesAData(Date data, int mes) throws DateTimeException {
+		return Date.valueOf(data.toLocalDate().minusMonths(mes));
+	}
+
+	public static Date subtrairDiasAData(Date data, int dias) throws DateTimeException {
+		return Date.valueOf(data.toLocalDate().minusDays(dias));
+	}
+
+	public static Timestamp juntarDataETempo(Date data, Time time) {
+		return Timestamp.from(data.toLocalDate().atTime(time.toLocalTime()).toInstant(ZoneOffset.ofHours(0)));
 	}
 
 	public static Boolean validarData(Date data) {
